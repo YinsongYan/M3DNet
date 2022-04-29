@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from model.attention import REA
+from models.attention import REA
 
 class REAM(nn.Module):
     def __init__(self,
