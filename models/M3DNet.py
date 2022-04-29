@@ -40,8 +40,33 @@ class OutConv(nn.Module):
     def forward(self, x):
         return self.conv(x)
 
-      
-      
+class Down(nn.Module):
+    def __init__(self):
+        super(Down, self).__init__()
+        self.max_pool_conv = nn.MaxPool2d(2)
+
+    def forward(self, x):
+        return self.max_pool_conv(x)
+
+
+class UP(nn.Module):
+    def __init__(self, in_channels, out_channels, bicubic=True):
+        super(UP, self).__init__()
+        self.bicubic = bicubic
+        if bicubic:
+            self.up = nn.Upsample(scale_factor=2, mode='bicubic', align_corners=True)
+            self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        else:
+            self.up = nn.ConvTranspose2d(in_channels, out_channels, kernel_size=2, stride=2)
+
+    def forward(self, x):
+        if self.bicubic:
+            out = self.conv(self.up(x))
+        else:
+            out = self.up(x)
+        return out      
+
+    
 class DBlock(nn.Module):
     def __init__(self,
                  ms_channels,
