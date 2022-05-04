@@ -2,6 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+def default_conv(in_channels, out_channels, kernel_size, stride=1, padding=None, bias=True, groups=1):
+    if not padding and stride == 1:
+        padding = kernel_size // 2
+    return nn.Conv2d(in_channels, out_channels, kernel_size, stride=stride, padding=padding, bias=bias, groups=groups)
+
 
 class REA(nn.Module):
     def __init__(self, n_feats, conv=default_conv):
@@ -16,7 +21,6 @@ class REA(nn.Module):
         self.conv4 = conv(f, n_feats, kernel_size=1)
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU(inplace=True)
-
 
     def forward(self, f):
         x = f
