@@ -96,8 +96,13 @@ class DBlock(nn.Module):
         channel_output5 = n_feats
         self.conv5 = Conv(channel_input5, channel_output5)
         self.conv6 = OutConv(channel_output5, n_feats)
+        self.rho = nn.Parameter(
+                nn.init.normal_(
+                    torch.empty(1).cuda(), mean=0.1, std=0.3
+                ))
+        
     def forward(self, HR, S, D):
-        r = D - self.convFT(self.convF(D)-(HR-S))
+        r = D - self.rho * self.convFT(self.convF(D)-(HR-S))
         x1 = self.conv1(r)
         x2 = self.down1(x1)
         x2 = self.conv2(x2)
@@ -118,14 +123,14 @@ class HBlock(nn.Module):
                  kernel_size=3):
         super(HBlock, self).__init__()      
         self.convF = nn.Conv2d(in_channels=n_feats, out_channels=ms_channels, kernel_size=3, stride=1, padding=1,bias=False)
-        self.rho = nn.Parameter(
+        self.eta = nn.Parameter(
             nn.init.normal_(
-                torch.empty(1).cuda(), mean=0.1, std=0.03
+                torch.empty(1).cuda(), mean=0.1, std=0.3
             ))
         self.prox = REAM(ms_channels, n_feats, ms_channels, kernel_size)
     def forward(self, HR, S, D):
         E = HR - S - self.convF(D)
-        R = HR - self.rho * E
+        R = HR - self.eta * E
         HR = self.prox(R)
         return HR
 
