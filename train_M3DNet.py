@@ -37,7 +37,7 @@ n_layer = 4  # 8
 
 # . Get your model
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-net = DUMSPNN4(ms_channels,
+net = M3DNet(ms_channels,
             pan_channels,
             n_feats,
             n_layer).to(device)
@@ -190,6 +190,19 @@ for epoch in range(num_epochs):
     writer.add_scalar('ERGAS/test', ERGAS, epoch)
 
     scheduler.step(loss_val)
+    
+    # visualize the step parameter rho and eta
+    writer.add_scalars('rho',
+                       {'rho_1': net.state_dict()['D_blocks.0.rho'],
+                        'rho_2': net.state_dict()['D_blocks.1.rho'],
+                        'rho_3': net.state_dict()['D_blocks.2.rho'],
+                        'rho_4': net.state_dict()['D_blocks.3.rho']}, epoch)
+    writer.add_scalars('eta',
+                       {'eta_1': net.state_dict()['H_blocks.0.eta'],
+                        'eta_2': net.state_dict()['H_blocks.1.eta'],
+                        'eta_3': net.state_dict()['H_blocks.2.eta'],
+                        'eta_4': net.state_dict()['H_blocks.3.eta']}, epoch)
+    
 
     ''' save model '''
     # Save the best weight  and  early stopping
