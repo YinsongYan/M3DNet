@@ -1,5 +1,6 @@
 # MD<sup>3</sup>Net
 This is the code for the paper "MD<sup>3</sup>Net: Integrating Model-driven and Data-driven Approaches for Pansharpening".
+https://doi.org/10.1109/TGRS.2022.3196427 (doi: 10.1109/TGRS.2022.3196427)
 
 ## Requirements
 
